@@ -4,6 +4,7 @@ allows finer-grained unit testing of each function.
 
 """
 
+from datetime import datetime, timezone
 import json
 from logging import Logger
 from mimetypes import guess_type as guess_mime_type
@@ -45,6 +46,10 @@ KNOWN_EXIT_STATUSES = {
 TRAJECTORY_SUBSETTER_VARINFO_CONFIG = join(
     dirname(abspath(__file__)), "config", "trajectorysubsetter_varinfo_config.json"
 )
+
+# The binary uses Boost to process input start and end times,
+# and Boost doesn't support dates before the year 1400.
+DEFAULT_TIME_START = "1400-01-01T00:00:00"
 
 
 def get_file_mimetype(file_name: str) -> Optional[str]:
@@ -171,7 +176,9 @@ def convert_harmony_datetime(harmony_datetime_str: str) -> str:
     the subsetter binary regular expression does not currently handle.
 
     """
-    return parse_datetime(harmony_datetime_str).strftime("%Y-%m-%dT%H:%M:%S")
+    parsed_datetime = parse_datetime(harmony_datetime_str)
+
+    return parsed_datetime.replace(tzinfo=None).isoformat()
 
 
 def include_support_variables(
@@ -216,3 +223,8 @@ def write_source_variables_to_file(
     ) as variables_file:
         json.dump(data, variables_file)
     return variables_file.name
+
+
+def default_time_end() -> str:
+    """Returns the current UTC time to be used as a default ending time."""
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
