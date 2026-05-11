@@ -267,26 +267,23 @@ class ForwardReferenceCoordinates : public Coordinate
     }
 
     /**
-     * @brief Return the segment's first trajectory index and its length.
+     * @brief Return the target segment's first trajectory index and its length,
+     *        given the index-begin dataset, the subsset-selected first
+     *        entry and the count of index-begin segments to consider. This
+     * method skips over fill-values in the index-begin references dataset.
      *
      * Note: This removes the count dataset dependency to calculate
      *       trajectory segment lengths. This was done because there exist
-     *       collections (such as ATL03) where the forward references
-     *       (e.g. index begin) contain fill values (zero). The count dataset
-     *       only considers non-fill index begin values Forward reference
-     *       datasets point to trajectory dataset indexes, where the trajectory
-     *       and count datasets only take into account non-fill index values.
+     *       collections (such as GEDI) where the target segment has fill-values
+     *       that need to be preserved, not accounted for in the count dataset.
      *
-     *       The output index begin dataset will contain no fill values.
-     *
-     * @param selectedStartIdx The start index of the selected segment in the
+     * @param selectedStartIdx The start index of the subset selection in the
      *                         index begin dataset.
-     * @param selectedCount    The total sum of counts for each index begin
-     *                         segment from the selected start index begin
-     *                         to the last non-fill value index begin value.
-     * @param firstTrajIndex   The trajectory index associated with the first
-     *                         non-fill indexBeg value.
-     * @param trajSegLength    The length of the trajectory segment.
+     * @param selectedCount    The number of index-begin entries in the
+     * subset-selection.
+     * @param firstTrajIndex   The output trajectory index associated with the
+     * first non-fill indexBeg value.
+     * @param trajSegLength    The output length of the trajectory segment.
      * @param maxIndexBegIdx   The final index of the entire indexBeg
      *                         dataset.
      * @param maxTrajIndex     The final index of the entire trajectory
@@ -300,6 +297,49 @@ class ForwardReferenceCoordinates : public Coordinate
                           long maxIndexBegIdx,
                           long maxTrajIndex,
                           int64_t indexBegDataset[])
+    /**
+     * Methodology (defineOneSegment)
+     * Parameters:
+     * @param In:  (1) selected start in index-begin dataset
+     * (first_selected_index_begin)
+     * @param In:  (2) Selected count of index-begin dataset
+     * (selected_index_begin_count)
+     * @param Out: (3) target index (segment)
+     * @param Out: (4) target Segment length
+     * @param In:  (5) max index of index-begin dataset
+     * @param In:  (6) max index of trajectory dataset
+     * @param In:  (7) the index-begin dataset
+     *
+     * Step 1: Define (1a) first non-fill index-begin:
+     *    1a: Scan-fwd-non-fill from (1), in index-begin dataset
+     *        Returns index reference within index-begin dataset, and value
+     * (target index)
+     *
+     * Step 2: Define (1b) last index-begin, non-fill:
+     *    2a: Scan-back-non-fill
+     *        Using last subset-selected index-begin value as upper bound
+     *        last_selected_index_begin = (1) + (2) -1
+     *
+     * Step 3: Two checks at this point:
+     *    3a: If no non-fill begin-index found
+     *             return 0 index reference and count
+     *    3b: If "last segment of target data"
+     *          compute target segment length on this basis
+     *
+     * Step 4: Compute length (of target segment, without using count dataset)
+     *   Look beyond subset-selected index-begin values, to the next index-begin
+     * reference
+     *
+     *    4a: next_index_begin = last_selected_index_begin + 1
+     *    4b: scan-fwd-non-fill to skip any index-begin fill values
+     *
+     *    Use this "next-index-begin" - 1 to represent the end of the target
+     *    segment We know the start of the last piece of the target segment
+     *    include length to start of last segment-part plus the length of the
+     *    last segment
+     *
+     *    4c: trajSegLength = allExceptLastCount + lastCount
+     */
     {
         LOG_DEBUG(" ForwardReferenceCoordinates::defineOneSegment(): ENTER");
 
@@ -358,20 +398,31 @@ class ForwardReferenceCoordinates : public Coordinate
                                 // selected segment.
 
         scanFwdNonFill(lastBegIdx + 1,
-                       maxIndexBegIdx,
+                       maxIndexBegIdx - 1,
                        nextTrajIndex,
                        nextBegIdx,
                        indexBegDataset);
 
-        // We need to calculate the length of the last segment in the selection
-        // since we can't use the count dataset.
-        // We don't subtract 1 from either count calculation because
-        // neither include the greater value.
-        long allExceptLastCount =
-            lastTrajIndex - firstTrajIndex; // Doesn't include last index
-        long lastCount =
-            nextTrajIndex - lastTrajIndex; // Doesn't include next index
-        trajSegLength = allExceptLastCount + lastCount;
+        // If nextTrajIndex is 0, there are no more valid segments ahead.
+        if (nextTrajIndex == 0)
+        {
+            // Set the trajectory segment length to the maximum trajectory
+            // index.
+            trajSegLength = maxTrajIndex;
+            LOG_DEBUG("ForwardReferenceCoordinates::defineOneSegment(): "
+                      "nextTrajIndex == 0, setting to maximum trajectory index:"
+                      << maxTrajIndex);
+        }
+        else
+        {
+            // We need to calculate the length of the last segment in the
+            // selection since we can't use the count dataset. We don't subtract
+            // 1 from either count calculation because neither include the
+            // greater value.
+            long allExceptLastCount = lastTrajIndex - firstTrajIndex;
+            long lastCount = nextTrajIndex - lastTrajIndex;
+            trajSegLength = allExceptLastCount + lastCount;
+        }
     }
 
   private:

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.7] - 2026-05-04
+
+### Changed
+
+- Fixes two bugs in Segmented-Trajectory Subsetting (L2 Data IceSAT-2, GEDI).
+  1) When a forward-reference segment definition (e.g. Beam-Leads.ssh_idx)
+  is itself not subsetted, but the target dataset (Freeboard-Segment group) is,
+  the forward index references would be left unchanged, and therefore incorrectly
+  referenced the target items.
+  2) When a subset of a forward-reference dataset included the tail-end of
+  the dataset (e.g. Reference_Surface.Beam_Lead-Ndx), errors could introduce
+  additional and/or missing elements in the target dataset (e.g., Beam-Leads group).
+
 ## [v1.0.6] - 2026-04-21
 
 ### Changed
@@ -80,6 +93,7 @@ see `legacy-CHANGELOG.md`.
 - On-premises scripts and artefacts for the SDPS system have been removed from
   the repository.
 
+[v1.0.7]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.7
 [v1.0.6]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.6
 [v1.0.5]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.5
 [v1.0.4]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.4
