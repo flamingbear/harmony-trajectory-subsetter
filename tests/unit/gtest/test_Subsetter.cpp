@@ -6,6 +6,7 @@
  *
  */
 
+#include <filesystem>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <string.h>
@@ -379,4 +380,38 @@ TEST_F(SubsetterTest,
 
     bool expected = subsetter->isMatchingDataFound(infilename, outfilename);
     EXPECT_TRUE(expected);
+}
+
+TEST_F(SubsetterTest, test_openCreateHdf5File_SuperblockTest)
+{
+    // Test openCreateHdf5File() to verify that the output HDF5 file
+    // is created with HDF5 1.8 compatibility bounds. The method evaluates
+    // the creation properties of the input file and configures the output
+    // file access property list to generate a version 2 superblock.
+    H5F_info2_t fileInfo;
+    H5::H5File h5Outfile;
+
+    H5::H5File h5Infile =
+        H5::H5File(gtest_utilities::getFullPath(
+                       "tests/data/variable_subset_ATL24_data.h5"),
+                   H5F_ACC_RDONLY);
+
+    std::string outFileName =
+        (std::filesystem::temp_directory_path() / "fake_superblock_file.h5")
+            .string();
+
+    subsetter->openCreateHdf5File(
+        h5Infile.getFileName(), outFileName, h5Infile, h5Outfile);
+
+    hid_t fileId = H5Fopen(outFileName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+    herr_t status = H5Fget_info2(fileId, &fileInfo);
+
+    unsigned superVersion = fileInfo.super.version;
+
+    EXPECT_EQ(superVersion, 2);
+
+    H5Fclose(fileId);
+
+    h5Outfile.close();
+    h5Infile.close();
 }
