@@ -28,7 +28,6 @@
 #include "SubsetDataLayers.h"
 #include "Temporal.h"
 #include "geobox.h"
-#include "geotiff_converter.h"
 
 /**
  * This is the base class for subsetting an HDF5 file.
@@ -40,11 +39,10 @@ class Subsetter
               std::vector<geobox> *geoboxes,
               Temporal *temporal,
               GeoPolygon *geoPolygon,
-              Configuration *config,
-              std::string outputFormat = "")
+              Configuration *config)
         : subsetDataLayers(subsetDataLayers), geoboxes(geoboxes),
           temporal(temporal), matchingDataFound(false), geoPolygon(geoPolygon),
-          config(config), outputFormat(outputFormat)
+          config(config)
     {
         dimensionScales = new DimensionScales();
     };
@@ -136,15 +134,6 @@ class Subsetter
         outfile.flush(H5F_SCOPE_GLOBAL);
         LOG_INFO("Subsetter::subset(): Datasets size: "
                  << subsetDataLayers->getDatasets().size());
-
-        // If the specified output format is a GeoTIFF, call the GeoTIFF
-        // converter.
-        if (outputFormat == "GeoTIFF")
-        {
-            LOG_DEBUG("Subsetter::subset(): Outputting to GeoTIFF");
-            geotiff_converter geotiff = geotiff_converter(
-                outfilename, shortName, outgroup, subsetDataLayers, config);
-        }
 
         return returnCode;
     }
@@ -764,8 +753,6 @@ class Subsetter
         if (!isMetadataGroup)
             datasetlinks->trackDatasetLinks(in);
 
-        short resolution;
-
         // Loop through all the objects in the input group, recursing on
         // groups and copying datasets.
         // Then determine if the group/dataset has been requested.
@@ -790,15 +777,6 @@ class Subsetter
                 H5::Group ingroup(in.openGroup(objname));
                 H5::Group outgroup(out.createGroup(objname));
 
-                if (outputFormat == "GeoTIFF" && !isMetadataGroup)
-                {
-                    requiredDatasets = config->getRequiredDatasetsByFormat(
-                        outputFormat,
-                        groupname + objname + "/",
-                        shortName,
-                        resolution);
-                }
-
                 copyAttributes(ingroup, outgroup, groupname);
                 copyH5(
                     ingroup, inRootGroup, outgroup, groupname + objname + "/");
@@ -808,11 +786,7 @@ class Subsetter
                     out.unlink(objname);
             }
             else if ((type_name == "symbolic link" || type_name == "dataset") &&
-                     (subsetDataLayers->is_dataset_included(groupname +
-                                                            objname) ||
-                      std::find(requiredDatasets.begin(),
-                                requiredDatasets.end(),
-                                objname) != requiredDatasets.end()))
+                     subsetDataLayers->is_dataset_included(groupname + objname))
             {
                 // If the dataset can be linked to previous dataset which is
                 // included, then create the link and be done with this dataset.
@@ -1225,12 +1199,6 @@ class Subsetter
 
     // information on dimension scales
     DimensionScales *dimensionScales;
-
-    // output format
-    std::string outputFormat;
-
-    // required datasets by format
-    std::vector<std::string> requiredDatasets;
 
     // set to true when matching data is found
     bool matchingDataFound;

@@ -62,14 +62,6 @@ below:
 * `RequiredDatasets` - A dictionary denoting required variables for different
   collections. A regular expression pattern specifies the variables to which
   the required variables are applicable.
-* `RequiredDatasetByFormat` - A dictionary that specifies variables that are
-  required for specific output file formats. A regular expression pattern
-  ensures that variables will only be included if they are prepended with a
-  specific string.
-* `Resolutions` - A dictionary denoting pixel resolutions to be used for
-  GeoTIFF output.
-* `Projections` - A dictionary mapping the prefix of some variable paths to a
-  string representing the projection (e.g., "NLAEA", "SLAEA" or "CEA").
 
 ### Versioning:
 
