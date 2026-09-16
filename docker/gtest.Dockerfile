@@ -2,7 +2,7 @@
 # GoogleTest image for the C++ subsetter of nasa/harmony-trajectory-subsetter.
 #
 # This image extends the "builder" stage of docker/service.Dockerfile, which
-# already holds the compiler toolchain, Boost, libgeotiff, HDF5 built from
+# already holds the compiler toolchain, Boost, HDF5 built from
 # source into /usr/local, and the subsetter source at /home/subsetter. On top
 # of that it adds CMake and GoogleTest, copies in the test sources and data,
 # and compiles the test executables. Running the container runs ctest.

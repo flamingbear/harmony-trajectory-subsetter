@@ -4,9 +4,6 @@
 -Wno-vla-extension \
 -L/usr/lib64 \
 -I/usr/include \
--I/usr/include/libgeotiff \
--lgeotiff \
--ltiff \
 /usr/lib64/libboost_program_options.a \
 /usr/lib64/libboost_system.a \
 /usr/lib64/libboost_filesystem.a \

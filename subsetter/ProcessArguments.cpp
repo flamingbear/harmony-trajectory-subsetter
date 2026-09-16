@@ -18,12 +18,9 @@ int ProcessArguments::process_args(int argc, char *argv[])
                                   "Name of output file")(
         "configfile,c",
         program_options::value<std::string>(),
-        "Configure file")("subsettype,t",
-                          program_options::value<std::string>(),
-                          "Subset type (ICESAT, SMAP, GLAS)")(
-        "bbox,b",
-        program_options::value<std::vector<std::string>>(),
-        "Bounding Boxes (West,South,East,North) degrees")(
+        "Configure file")("bbox,b",
+                          program_options::value<std::vector<std::string>>(),
+                          "Bounding Boxes (West,South,East,North) degrees")(
         "start,s",
         program_options::value<std::string>(),
         "Temporal search start")(
@@ -34,12 +31,6 @@ int ProcessArguments::process_args(int argc, char *argv[])
         "boundingshape,p",
         program_options::value<std::string>(),
         "Bounding shape(polygon) or .geojson file")(
-        "reformat,r",
-        program_options::value<std::string>(),
-        "Change the output format (-r GeoTIFF)")(
-        "crs,j",
-        program_options::value<std::string>(),
-        "Reproject to the coordinate reference system (e.g. EPSG:4326")(
         "shortname,n",
         program_options::value<std::string>(),
         "The collection shortName for granules that do not contain a shortName "
@@ -74,11 +65,8 @@ int ProcessArguments::process_args(int argc, char *argv[])
     if (setBoundingShape(variables_map) == ERROR)
         return ERROR;
 
-    setSubsettype(variables_map);
     setConfigFile(variables_map);
     setDatasetList(variables_map);
-    setReformat(variables_map);
-    setCRS(variables_map);
     setCollectionShortname(variables_map);
 
     return PASS;
@@ -101,16 +89,6 @@ void ProcessArguments::setLogLevel(program_options::variables_map variables_map)
     }
 }
 
-void ProcessArguments::setSubsettype(
-    program_options::variables_map variables_map)
-{
-    // If either the subset type are specified, pull them from the
-    // variable map, otherwise assign these variables to an empty string.
-    subsettype = (variables_map.count("subsettype"))
-                     ? variables_map["subsettype"].as<std::string>()
-                     : "";
-}
-
 void ProcessArguments::setConfigFile(
     program_options::variables_map variables_map)
 {
@@ -130,38 +108,6 @@ void ProcessArguments::setDatasetList(
         datasetList = variables_map["includedataset"].as<std::string>();
         LOG_INFO("Subset::process_args(): includedataset: " << datasetList);
     }
-}
-
-void ProcessArguments::setReformat(program_options::variables_map variables_map)
-{
-    // Access reformatting, if specified.
-    if (variables_map.count("reformat"))
-    {
-        LOG_INFO("Subset::process_args(): reformat");
-        originalOutputFormat = outputFormat =
-            variables_map["reformat"].as<std::string>();
-        if (outputFormat == "GeoTIFF" || outputFormat == "GTiff" ||
-            outputFormat == "GEO" || outputFormat == "KML")
-        {
-            outputFormat = "GeoTIFF";
-        }
-        else if (outputFormat == "netCDF3" || outputFormat == "NetCDF3" ||
-                 outputFormat == "NetCDF-3")
-        {
-            outputFormat = "NetCDF-3";
-        }
-        LOG_INFO("Subset::process_args(): Reformatting to "
-                 << originalOutputFormat);
-    }
-}
-
-void ProcessArguments::setCRS(program_options::variables_map variables_map)
-{
-    // Access coordinate reference system / reprojection, if specified.
-    if (variables_map.count("crs"))
-        reproject = true;
-    else
-        reproject = false;
 }
 
 void ProcessArguments::setCollectionShortname(
