@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
         std::vector<geobox> *geoboxes = processArgs->getGeoboxes();
         std::string infilename = processArgs->getInfilename();
         std::string outfilename = processArgs->getOutfilename();
-        std::string outputFormat = processArgs->getOutputFormat();
         std::string collShortName = processArgs->getCollShortName();
 
         Configuration *config = new Configuration(processArgs->getConfigFile());
@@ -105,12 +104,8 @@ int main(int argc, char *argv[])
 
         // Extract the granule mission by passing the short name returned by
         // a Subsetter class function into a Configuration instance function.
-        Subsetter *getMission = new Subsetter(subsetDataLayers,
-                                              geoboxes,
-                                              temporal,
-                                              geoPolygon,
-                                              config,
-                                              outputFormat);
+        Subsetter *getMission = new Subsetter(
+            subsetDataLayers, geoboxes, temporal, geoPolygon, config);
         H5::H5File infile = H5::H5File(infilename, H5F_ACC_RDONLY);
 
         std::string shortname = getMission->retrieveShortName(infile);
@@ -146,12 +141,8 @@ int main(int argc, char *argv[])
         }
         else // Use the base Subsetter if the mission isn't GEDI or ICESAT.
         {
-            subsetter = new Subsetter(subsetDataLayers,
-                                      geoboxes,
-                                      temporal,
-                                      geoPolygon,
-                                      config,
-                                      outputFormat);
+            subsetter = new Subsetter(
+                subsetDataLayers, geoboxes, temporal, geoPolygon, config);
         }
         ErrorCode = subsetter->subset(infilename, outfilename, shortname);
         if (ErrorCode == 0)

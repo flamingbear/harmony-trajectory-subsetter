@@ -16,8 +16,8 @@ WORKDIR /tmp/build
 RUN dnf -y upgrade && \
     dnf -y install epel-release && \
     dnf config-manager --set-enabled crb && \
-    dnf -y install gcc-c++ make libjpeg-turbo libgeotiff-devel proj-devel \
-        libaec-devel boost-static redhat-rpm-config wget zlib-devel && \
+    dnf -y install gcc-c++ make libaec-devel boost-static redhat-rpm-config \
+        wget zlib-devel && \
     dnf clean all
 
 # Build HDF5 from source.
@@ -60,7 +60,7 @@ WORKDIR /home
 RUN dnf -y upgrade && \
     dnf -y install epel-release && \
     dnf config-manager --set-enabled crb && \
-    dnf -y install libgeotiff libjpeg-turbo proj libaec python3.13 && \
+    dnf -y install libaec python3.13 && \
     dnf clean all && \
     python3.13 -m ensurepip --upgrade && \
     ln -s /usr/bin/python3.13 /usr/bin/python && \

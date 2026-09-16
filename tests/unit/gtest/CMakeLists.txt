@@ -9,8 +9,8 @@
 #   Boost, and HDF5 built from source into /usr/local.
 # * The local conda environment described by environment.yaml.
 #
-# Neither environment needs extra CMake flags. GoogleTest, HDF5, Boost,
-# libtiff and libgeotiff are all resolved with find_package / find_library.
+# Neither environment needs extra CMake flags. GoogleTest, HDF5 and Boost are
+# all resolved with find_package.
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.14)
 project(harmony_trajectory_subsetter)
@@ -40,16 +40,10 @@ find_package(GTest REQUIRED)
 # (the Docker image's /usr/local build, or a distro package).
 find_package(HDF5 REQUIRED COMPONENTS C CXX HL)
 
-# Boost, libgeotiff and libtiff are resolved to absolute paths rather than
-# linked by bare name, so that a conda build cannot pick up a different
-# Boost from elsewhere on the system (e.g. Homebrew on macOS) at link or load
-# time.
+# Boost is resolved to absolute paths rather than linked by bare name, so
+# that a conda build cannot pick up a different Boost from elsewhere on the
+# system (e.g. Homebrew on macOS) at link or load time.
 find_package(Boost REQUIRED COMPONENTS program_options filesystem date_time regex)
-find_package(TIFF REQUIRED)
-find_library(GEOTIFF_LIBRARY geotiff REQUIRED)
-# libgeotiff installs its headers under a distribution-specific subdirectory
-# (Rocky: include/libgeotiff, conda: include).
-find_path(GEOTIFF_INCLUDE_DIR geotiffio.h PATH_SUFFIXES libgeotiff geotiff REQUIRED)
 
 enable_testing()
 
@@ -70,11 +64,9 @@ add_compile_options(-DH5_USE_18_API -Og -Wno-vla-extension)
 # configure time so the test executables can be run from any directory.
 add_compile_definitions(TRAJECTORY_SUBSETTER_ROOT="${REPO_ROOT}")
 
-include_directories(${HDF5_INCLUDE_DIRS} ${GEOTIFF_INCLUDE_DIR})
+include_directories(${HDF5_INCLUDE_DIRS})
 
 set(COMMON_LIBRARIES
-    ${GEOTIFF_LIBRARY}
-    TIFF::TIFF
     Boost::program_options
     Boost::filesystem
     Boost::date_time

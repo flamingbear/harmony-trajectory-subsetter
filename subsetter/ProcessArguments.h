@@ -36,17 +36,13 @@ class ProcessArguments
     std::string getInfilename() { return infilename; }
     std::string getOutfilename() { return outfilename; }
     std::string getConfigFile() { return configFile; }
-    std::string getSubsettype() { return subsettype; }
     std::string getBoundingBox() { return bounding_box; }
     std::string getStartString() { return startString; }
     std::string getEndString() { return endString; }
-    std::string getOriginalOutputFormat() { return originalOutputFormat; }
-    std::string getOutputFormat() { return outputFormat; }
     std::string getDatasetList() { return datasetList; }
     std::string getCollShortName() { return collShortName; }
     std::string getLogLevel() { return logLevel; }
     std::string getLogFile() { return logFile; }
-    bool isReproject() { return reproject; }
 
     std::vector<geobox> *getGeoboxes() { return geoboxes; }
     std::vector<std::string> getDatasetsToInclude()
@@ -57,11 +53,8 @@ class ProcessArguments
 
   private:
     void setLogLevel(program_options::variables_map variables_map);
-    void setSubsettype(program_options::variables_map variables_map);
     void setConfigFile(program_options::variables_map variables_map);
     void setDatasetList(program_options::variables_map variables_map);
-    void setReformat(program_options::variables_map variables_map);
-    void setCRS(program_options::variables_map variables_map);
     void setCollectionShortname(program_options::variables_map variables_map);
 
     int showHelpVerifyFilename(program_options::options_description description,
@@ -76,17 +69,13 @@ class ProcessArguments
     std::string infilename;
     std::string outfilename;
     std::string configFile;
-    std::string subsettype;
     std::string bounding_box;
     std::string startString;
     std::string endString;
-    std::string originalOutputFormat;
-    std::string outputFormat;
     std::string datasetList;
     std::string collShortName;
     std::string logLevel;
     std::string logFile;
-    bool reproject;
 
     std::vector<geobox> *geoboxes =
         nullptr; // Multiple bounding boxes can be specified.

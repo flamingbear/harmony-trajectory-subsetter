@@ -222,15 +222,6 @@ class HarmonyAdapter(BaseHarmonyAdapter):
         * `--loglevel` - The log level can be DEBUG, INFO, WARNING,
           ERROR, or CRITICAL
 
-        Other binary parameters currently not used:
-
-        * `--crs` - Specifies a coordinate system to project the output,
-          including EPSG codes.
-        * `--reformat` - Specifies the output format, such a "GeoTIFF". A
-          future feature.
-        * `--subsettype` - Can be "ICESAT", "SMAP" or "GLAS". Omitted as
-          not included in the `ICESat2ToolAdapter.py`.
-
         """
         binary_parameters = {
             "--configfile": SUBSETTER_CONFIG,
