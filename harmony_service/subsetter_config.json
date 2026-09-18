@@ -252,13 +252,5 @@
             "PhotonIndexBegin": "rx_sample_start_index",
             "SegmentPhotonCount": "rx_sample_count"
         }
-    },
-    "FileSizeLimit": {
-        "ASCII": "2"
-    },
-    "RequiredDatasets": {
-        "GEDI_L[124][AB]": {
-            "/BEAM[\\d]+$": "shot_number"
-        }
     }
 }

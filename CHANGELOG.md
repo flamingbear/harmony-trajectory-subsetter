@@ -34,6 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Dead configuration and source that nothing reads or runs: the `FileSizeLimit`
+  and `RequiredDatasets` sections of `subsetter_config.json`, neither of which
+  `Configuration.h` parses, and `subsetter/HeightSegmentCoordinates.h`, which
+  was included by `Subsetter.h` but never instantiated. The height-segment-rate
+  handling that ICESat-2 actually uses lives in `IcesatSubsetter` and the
+  forward/reverse reference coordinate classes, and is unaffected.
+
 - The unreachable GeoTIFF output path: `subsetter/geotiff_converter.h`, the
   `--reformat`, `--crs` and `--subsettype` command-line options, and the
   `RequiredDatasetsByFormat`, `Resolution` and `Projections` sections of
