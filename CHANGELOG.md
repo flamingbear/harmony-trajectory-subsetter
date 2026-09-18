@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v1.0.14] - 2026-09-22
 
 ### Changed
 
@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   1.90. It now uses the supported path, so the subsetter builds against
   current Boost releases as well as the 1.75 and 1.84 in the service image and
   the conda environment.
+### Removed
+
+- Dead configuration and source that nothing reads or runs: the `FileSizeLimit`
+  and `RequiredDatasets` sections of `subsetter_config.json`, neither of which
+  `Configuration.h` parses, and `subsetter/HeightSegmentCoordinates.h`, which
+  was included by `Subsetter.h` but never instantiated. The height-segment-rate
+  handling that ICESat-2 actually uses lives in `IcesatSubsetter` and the
+  forward/reverse reference coordinate classes, and is unaffected.
 
 ## [v1.0.13] - 2026-09-16
 
@@ -186,6 +194,7 @@ see `legacy-CHANGELOG.md`.
 - On-premises scripts and artefacts for the SDPS system have been removed from
   the repository.
 
+[v1.0.14]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.14
 [v1.0.13]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.13
 [v1.0.12]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.12
 [v1.0.11]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.11
