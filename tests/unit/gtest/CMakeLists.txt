@@ -15,7 +15,12 @@
 cmake_minimum_required(VERSION 3.14)
 project(harmony_trajectory_subsetter)
 
-set(CMAKE_CXX_STANDARD 20)
+# C++17 is the language level for every build path: the two makeit
+# scripts and this project. std::filesystem, used by the ProcessArguments
+# and Subsetter tests, is the only feature here that needs more than
+# C++14. Keep these three in step; compiling the same headers at
+# different levels lets a change pass one build and fail another.
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # When building inside an activated conda environment, add CONDA_PREFIX as a

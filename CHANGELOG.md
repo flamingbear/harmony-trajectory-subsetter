@@ -17,6 +17,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The duplicate, never-compiled `tests/unit/gtest/IndexSelection_test.cpp` was
   removed.
 
+- Every C++ build path now compiles at the same language level, C++17:
+  `makeit_harmony` was raised from C++14 and `makeit_local_conda` and the
+  GoogleTest project were lowered from C++20. Compiling the same headers at
+  two different levels let a change pass one build and fail another.
+  `std::filesystem`, used by two test files, is the only feature in the
+  repository that needs more than C++14.
+
+### Fixed
+
+- `subsetter/GeoPolygon.h` included Boost Geometry's `multi_polygon.hpp` from
+  the deprecated `boost/geometry/multi/` location, which Boost removed in
+  1.90. It now uses the supported path, so the subsetter builds against
+  current Boost releases as well as the 1.75 and 1.84 in the service image and
+  the conda environment.
+
 ### Removed
 
 - The unreachable GeoTIFF output path: `subsetter/geotiff_converter.h`, the

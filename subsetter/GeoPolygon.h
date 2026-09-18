@@ -12,7 +12,7 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/geometry/multi/geometries/multi_polygon.hpp>
+#include <boost/geometry/geometries/multi_polygon.hpp>
 #include <boost/type_traits/is_empty.hpp>
 
 #include "LogLevel.h"
