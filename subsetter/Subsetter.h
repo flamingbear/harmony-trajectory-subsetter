@@ -22,7 +22,6 @@
 #include "DimensionScales.h"
 #include "ForwardReferenceCoordinates.h"
 #include "GeoPolygon.h"
-#include "HeightSegmentCoordinates.h"
 #include "IndexSelection.h"
 #include "LogLevel.h"
 #include "SubsetDataLayers.h"

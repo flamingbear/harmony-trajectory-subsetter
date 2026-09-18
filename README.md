@@ -58,10 +58,6 @@ below:
   that should not be subsetted. These paths are also regular expression
   patterns.
 * `PhotonSegmentGroups` - Groups that require special handling.
-* `FileSizeLimit` - Output file size limit.
-* `RequiredDatasets` - A dictionary denoting required variables for different
-  collections. A regular expression pattern specifies the variables to which
-  the required variables are applicable.
 
 ### Versioning:
 
