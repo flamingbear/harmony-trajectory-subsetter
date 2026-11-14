@@ -120,6 +120,13 @@ class FwdRefBeginDataset
         // For each selected element group, write to the segment begin
         // output/subset dataset.
         std::map<long, long> allSegments = selectedElements->getSegments();
+
+        // getSegments() is empty when the selection covers the whole dataset
+        // (e.g. a temporal range spanning every segment), so select it all.
+        if (allSegments.empty())
+        {
+            allSegments[selectedElements->offset()] = selectedElements->size();
+        }
         for (std::map<long, long>::iterator it = allSegments.begin();
              it != allSegments.end();
              it++)

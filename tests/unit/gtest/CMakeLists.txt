@@ -46,6 +46,7 @@ include(GoogleTest)
 add_executable(subsetter_test
                gtest_utilities.cpp
                test_ForwardReferenceCoordinates.cpp
+               test_FwdRefBeginDataset.cpp
                test_IndexSelection.cpp
                test_ATL10_v005_Configuration.cpp
                test_ATL10_v006_Configuration.cpp
