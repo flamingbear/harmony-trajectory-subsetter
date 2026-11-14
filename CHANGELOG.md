@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.13] - 2026-11-14
+
+### Fixed
+
+- A temporal-only subset whose time range covers every segment of an ATL03 or
+  ATL08 beam group wrote uninitialized memory to the forward-reference
+  index-begin dataset (e.g. `/gt1l/geolocation/ph_index_beg`) instead of the
+  source values. Requests that also had a spatial constraint, or whose time
+  range excluded at least one segment, were not affected.
+
 ## [v1.0.12] - 2026-09-09
 
 ### Changed
@@ -146,6 +156,7 @@ see `legacy-CHANGELOG.md`.
 - On-premises scripts and artefacts for the SDPS system have been removed from
   the repository.
 
+[v1.0.13]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.13
 [v1.0.12]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.12
 [v1.0.11]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.11
 [v1.0.10]: https://github.com/nasa/harmony-trajectory-subsetter/releases/tag/1.0.10
